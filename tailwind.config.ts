@@ -57,6 +57,11 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // Custom tokens
+        gold: "hsl(var(--gold))",
+        leaf: "hsl(var(--leaf))",
+        bark: "hsl(var(--bark))",
+        cream: "hsl(var(--cream))",
       },
       borderRadius: {
         lg: "var(--radius)",
