@@ -37,34 +37,109 @@ function playTone(
   }
 }
 
-export function playTickSound() {
-  playTone(800, 0.05, 'square', 0.1);
-}
+// ===== Background Music =====
+let bgMusicNodes: { osc: OscillatorNode; gain: GainNode }[] = [];
+let bgMusicPlaying = false;
+let bgMusicMuted = false;
 
-export function playSpinSound(duration: number = 4) {
-  // Rapid ticking that slows down
-  const ctx = getAudioContext();
-  const steps = 80;
-  for (let i = 0; i < steps; i++) {
-    const progress = i / steps;
-    // Exponential slowdown
-    const time = duration * (1 - Math.pow(1 - progress, 2));
-    const freq = 400 + Math.random() * 200;
-    playTone(freq, 0.04, 'square', 0.08, time);
+const BG_MELODY = [
+  523.25, 587.33, 659.25, 698.46, 783.99, 659.25, 698.46, 523.25,
+  587.33, 523.25, 440.00, 493.88, 523.25, 587.33, 659.25, 523.25,
+];
+const BG_NOTE_DURATION = 0.45;
+let bgLoopTimeout: ReturnType<typeof setTimeout> | null = null;
+
+function playBgLoop(muted: boolean) {
+  if (muted) return;
+  try {
+    const ctx = getAudioContext();
+    const now = ctx.currentTime;
+
+    BG_MELODY.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + i * BG_NOTE_DURATION);
+      gain.gain.setValueAtTime(0, now + i * BG_NOTE_DURATION);
+      gain.gain.linearRampToValueAtTime(0.06, now + i * BG_NOTE_DURATION + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + i * BG_NOTE_DURATION + BG_NOTE_DURATION * 0.9);
+      osc.start(now + i * BG_NOTE_DURATION);
+      osc.stop(now + i * BG_NOTE_DURATION + BG_NOTE_DURATION);
+
+      // Bass accompaniment
+      const bassOsc = ctx.createOscillator();
+      const bassGain = ctx.createGain();
+      bassOsc.connect(bassGain);
+      bassGain.connect(ctx.destination);
+      bassOsc.type = 'triangle';
+      bassOsc.frequency.setValueAtTime(freq * 0.5, now + i * BG_NOTE_DURATION);
+      bassGain.gain.setValueAtTime(0, now + i * BG_NOTE_DURATION);
+      bassGain.gain.linearRampToValueAtTime(0.03, now + i * BG_NOTE_DURATION + 0.02);
+      bassGain.gain.exponentialRampToValueAtTime(0.001, now + i * BG_NOTE_DURATION + BG_NOTE_DURATION * 0.7);
+      bassOsc.start(now + i * BG_NOTE_DURATION);
+      bassOsc.stop(now + i * BG_NOTE_DURATION + BG_NOTE_DURATION);
+    });
+
+    const totalDuration = BG_MELODY.length * BG_NOTE_DURATION * 1000;
+    bgLoopTimeout = setTimeout(() => {
+      if (bgMusicPlaying && !bgMusicMuted) {
+        playBgLoop(bgMusicMuted);
+      }
+    }, totalDuration);
+  } catch (e) {
+    // Silently fail
   }
 }
+
+export function startBackgroundMusic(muted = false) {
+  bgMusicMuted = muted;
+  if (bgMusicPlaying) return;
+  bgMusicPlaying = true;
+  if (!muted) {
+    try {
+      getAudioContext().resume();
+    } catch (e) {}
+    playBgLoop(false);
+  }
+}
+
+export function stopBackgroundMusic() {
+  bgMusicPlaying = false;
+  bgMusicMuted = true;
+  if (bgLoopTimeout) {
+    clearTimeout(bgLoopTimeout);
+    bgLoopTimeout = null;
+  }
+}
+
+export function setBackgroundMusicMuted(muted: boolean) {
+  bgMusicMuted = muted;
+  if (!muted && bgMusicPlaying) {
+    try {
+      getAudioContext().resume();
+    } catch (e) {}
+    playBgLoop(false);
+  } else if (muted && bgLoopTimeout) {
+    clearTimeout(bgLoopTimeout);
+    bgLoopTimeout = null;
+  }
+}
+
+// ===== Sound Effects =====
 
 export function playWinSound() {
   // Celebratory fanfare
   const melody = [
-    { freq: 523, time: 0 },      // C5
-    { freq: 659, time: 0.1 },    // E5
-    { freq: 784, time: 0.2 },    // G5
-    { freq: 1047, time: 0.3 },   // C6
-    { freq: 784, time: 0.45 },   // G5
-    { freq: 1047, time: 0.55 },  // C6
-    { freq: 1319, time: 0.65 },  // E6
-    { freq: 1568, time: 0.8 },   // G6
+    { freq: 523, time: 0 },
+    { freq: 659, time: 0.1 },
+    { freq: 784, time: 0.2 },
+    { freq: 1047, time: 0.3 },
+    { freq: 784, time: 0.45 },
+    { freq: 1047, time: 0.55 },
+    { freq: 1319, time: 0.65 },
+    { freq: 1568, time: 0.8 },
   ];
 
   melody.forEach(({ freq, time }) => {
@@ -74,7 +149,6 @@ export function playWinSound() {
 }
 
 export function playPopupSound() {
-  // Ascending chime
   [523, 659, 784, 1047].forEach((freq, i) => {
     playTone(freq, 0.2, 'sine', 0.2, i * 0.08);
   });
@@ -85,7 +159,6 @@ export function playButtonClick() {
 }
 
 export function playConfettiSound() {
-  // Multiple random pings
   for (let i = 0; i < 8; i++) {
     const freq = 600 + Math.random() * 800;
     playTone(freq, 0.15, 'sine', 0.15, i * 0.06);
