@@ -2,95 +2,120 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap');
+
+/* ===== LUCKY WHEEL DESIGN SYSTEM ===== */
+/* Natural, warm, earthy tones with festive accents */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Core palette - warm natural tones */
+    --background: 38 30% 96%;
+    --foreground: 25 35% 15%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 38 40% 98%;
+    --card-foreground: 25 35% 15%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 38 40% 98%;
+    --popover-foreground: 25 35% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Rich forest green primary */
+    --primary: 145 45% 32%;
+    --primary-foreground: 38 40% 98%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Warm sand secondary */
+    --secondary: 38 55% 88%;
+    --secondary-foreground: 25 35% 20%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted warm beige */
+    --muted: 38 25% 90%;
+    --muted-foreground: 25 20% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Golden amber accent */
+    --accent: 36 90% 55%;
+    --accent-foreground: 25 35% 10%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 38 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 38 30% 82%;
+    --input: 38 30% 88%;
+    --ring: 145 45% 32%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Custom tokens */
+    --gold: 43 96% 56%;
+    --gold-dark: 36 80% 42%;
+    --earth: 25 60% 40%;
+    --leaf: 145 45% 32%;
+    --leaf-light: 145 40% 45%;
+    --bark: 25 35% 25%;
+    --cream: 38 55% 95%;
+    --warm-white: 38 40% 98%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(145 45% 25%), hsl(145 50% 40%));
+    --gradient-gold: linear-gradient(135deg, hsl(43 96% 56%), hsl(36 90% 45%));
+    --gradient-warm: linear-gradient(180deg, hsl(38 30% 96%), hsl(38 40% 90%));
+    --gradient-wheel: conic-gradient(
+      hsl(145 45% 35%) 0deg,
+      hsl(43 96% 56%) 60deg,
+      hsl(145 45% 35%) 60deg,
+      hsl(36 80% 48%) 120deg,
+      hsl(145 45% 35%) 120deg,
+      hsl(43 96% 56%) 180deg,
+      hsl(145 45% 35%) 180deg,
+      hsl(36 80% 48%) 240deg,
+      hsl(145 45% 35%) 240deg,
+      hsl(43 96% 56%) 300deg,
+      hsl(145 45% 35%) 300deg,
+      hsl(36 80% 48%) 360deg
+    );
 
-    --sidebar-primary: 240 5.9% 10%;
+    /* Shadows */
+    --shadow-warm: 0 4px 24px -4px hsl(25 35% 20% / 0.15);
+    --shadow-glow: 0 0 40px hsl(43 96% 56% / 0.4);
+    --shadow-green: 0 8px 32px -8px hsl(145 45% 32% / 0.4);
 
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 38 30% 94%;
+    --sidebar-foreground: 25 35% 15%;
+    --sidebar-primary: 145 45% 32%;
+    --sidebar-primary-foreground: 38 40% 98%;
+    --sidebar-accent: 38 25% 88%;
+    --sidebar-accent-foreground: 25 35% 15%;
+    --sidebar-border: 38 30% 82%;
+    --sidebar-ring: 145 45% 32%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --background: 25 35% 8%;
+    --foreground: 38 30% 92%;
+    --card: 25 30% 12%;
+    --card-foreground: 38 30% 92%;
+    --popover: 25 30% 12%;
+    --popover-foreground: 38 30% 92%;
+    --primary: 145 50% 45%;
+    --primary-foreground: 25 35% 8%;
+    --secondary: 25 30% 18%;
+    --secondary-foreground: 38 30% 92%;
+    --muted: 25 25% 18%;
+    --muted-foreground: 38 20% 60%;
+    --accent: 36 90% 55%;
+    --accent-foreground: 25 35% 8%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 38 40% 98%;
+    --border: 25 30% 22%;
+    --input: 25 30% 18%;
+    --ring: 145 50% 45%;
+    --sidebar-background: 25 35% 8%;
+    --sidebar-foreground: 38 30% 92%;
+    --sidebar-primary: 145 50% 45%;
+    --sidebar-primary-foreground: 25 35% 8%;
+    --sidebar-accent: 25 30% 18%;
+    --sidebar-accent-foreground: 38 30% 92%;
+    --sidebar-border: 25 30% 22%;
+    --sidebar-ring: 145 50% 45%;
   }
 }
 
@@ -101,5 +126,171 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Nunito', sans-serif;
+    background-image:
+      radial-gradient(circle at 20% 20%, hsl(145 45% 32% / 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, hsl(43 96% 56% / 0.07) 0%, transparent 50%);
+    background-attachment: fixed;
   }
+
+  h1, h2, h3 {
+    font-family: 'Fredoka One', cursive;
+  }
+}
+
+@layer components {
+  .btn-spin {
+    @apply relative overflow-hidden font-bold text-lg px-10 py-4 rounded-full transition-all duration-300;
+    background: var(--gradient-gold);
+    color: hsl(var(--bark));
+    box-shadow: 0 4px 20px hsl(43 96% 56% / 0.5), inset 0 1px 0 hsl(0 0% 100% / 0.3);
+  }
+
+  .btn-spin:hover:not(:disabled) {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 30px hsl(43 96% 56% / 0.6), inset 0 1px 0 hsl(0 0% 100% / 0.3);
+  }
+
+  .btn-spin:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+  }
+
+  .btn-spin:disabled {
+    @apply opacity-60 cursor-not-allowed;
+  }
+
+  .card-natural {
+    @apply rounded-2xl border;
+    background: hsl(var(--warm-white));
+    box-shadow: var(--shadow-warm);
+  }
+
+  .number-badge {
+    @apply inline-flex items-center justify-center rounded-full font-bold text-sm;
+    background: var(--gradient-gold);
+    color: hsl(var(--bark));
+    min-width: 2.5rem;
+    height: 2.5rem;
+    box-shadow: 0 2px 8px hsl(43 96% 56% / 0.3);
+  }
+
+  .wheel-container {
+    @apply relative flex items-center justify-center;
+  }
+
+  .history-badge {
+    @apply inline-flex items-center justify-center rounded-full text-xs font-bold px-2 py-0.5;
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
+
+  .sparkle {
+    animation: sparkle 1.5s ease-in-out infinite;
+  }
+
+  .float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .spin-text {
+    animation: spin-text 20s linear infinite;
+  }
+
+  .glow-gold {
+    box-shadow: var(--shadow-glow);
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: 'Fredoka One', cursive;
+  }
+
+  .font-body {
+    font-family: 'Nunito', sans-serif;
+  }
+
+  .text-gold {
+    color: hsl(var(--gold));
+  }
+
+  .text-leaf {
+    color: hsl(var(--leaf));
+  }
+
+  .bg-gold {
+    background-color: hsl(var(--gold));
+  }
+
+  .bg-gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .bg-gradient-gold {
+    background: var(--gradient-gold);
+  }
+
+  .shadow-warm {
+    box-shadow: var(--shadow-warm);
+  }
+
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.2); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes spin-text {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes confetti-fall {
+  0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+@keyframes pop-in {
+  0% { transform: scale(0.5) rotate(-5deg); opacity: 0; }
+  70% { transform: scale(1.1) rotate(2deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes number-roll {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-100%); }
+}
+
+@keyframes winner-glow {
+  0%, 100% { box-shadow: 0 0 10px hsl(43 96% 56% / 0.5); }
+  50% { box-shadow: 0 0 25px hsl(43 96% 56% / 0.9), 0 0 50px hsl(43 96% 56% / 0.4); }
+}
+
+.pop-in { animation: pop-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+.confetti-fall { animation: confetti-fall 3s ease-in forwards; }
+.winner-glow { animation: winner-glow 1.5s ease-in-out infinite; }
+
+/* Wheel spinning animation */
+.wheel-spinning {
+  animation: wheel-spin var(--spin-duration, 4s) cubic-bezier(0.17, 0.67, 0.12, 0.99) forwards;
+}
+
+@keyframes wheel-spin {
+  from { transform: rotate(var(--start-angle, 0deg)); }
+  to { transform: rotate(var(--end-angle, 1440deg)); }
+}
+
+/* Number ticker animation */
+@keyframes ticker {
+  0% { transform: translateY(0%); }
+  100% { transform: translateY(calc(-100% + 4rem)); }
 }
