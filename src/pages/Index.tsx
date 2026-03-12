@@ -5,6 +5,13 @@ import { WinnerPopup } from "@/components/WinnerPopup";
 import { SpinHistory, type HistoryRound } from "@/components/SpinHistory";
 import { Confetti } from "@/components/Confetti";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
   playWinSound,
   playButtonClick,
   startBackgroundMusic,
@@ -12,9 +19,28 @@ import {
   setBackgroundMusicMuted,
 } from "@/utils/sound";
 import wheelImg from "@/assets/wheel-decoration.png";
+import logoTruong from "@/assets/logo-truong.png";
+import logoKhoa from "@/assets/logo-khoa.png";
+import anh1 from "@/assets/anh1.jpeg";
+import anh2 from "@/assets/anh2.jpeg";
+import anh3 from "@/assets/anh3.jpeg";
+import anh4 from "@/assets/anh4.jpeg";
 
 const TOTAL_NUMBERS = 300;
 const ALL_NUMBERS = Array.from({ length: TOTAL_NUMBERS }, (_, i) => i + 1);
+const STORAGE_KEY = "chance-wheel-state-v1";
+
+type StoredHistoryRound = Omit<HistoryRound, "timestamp"> & {
+  timestamp: string;
+};
+
+interface StoredState {
+  remainingNumbers: number[];
+  history: StoredHistoryRound[];
+  round: number;
+  winnerCount: string;
+  isMuted: boolean;
+}
 
 export default function Index() {
   const [remainingNumbers, setRemainingNumbers] = useState<number[]>([...ALL_NUMBERS]);
@@ -31,6 +57,52 @@ export default function Index() {
   const roundRef = useRef(0);
   const musicStarted = useRef(false);
 
+  // Load saved state from localStorage on first mount
+  useEffect(() => {
+    try {
+      const raw = typeof window !== "undefined" ? window.localStorage.getItem(STORAGE_KEY) : null;
+      if (!raw) return;
+
+      const parsed = JSON.parse(raw) as Partial<StoredState>;
+
+      if (parsed.remainingNumbers && parsed.remainingNumbers.length > 0) {
+        setRemainingNumbers(parsed.remainingNumbers);
+      }
+
+      if (parsed.history && Array.isArray(parsed.history)) {
+        const hydratedHistory: HistoryRound[] = parsed.history.map((item) => ({
+          ...item,
+          timestamp: new Date(item.timestamp),
+        }));
+        setHistory(hydratedHistory);
+
+        // If round is not explicitly stored, infer from last history item
+        if (parsed.round == null && hydratedHistory.length > 0) {
+          const latestRound = hydratedHistory[0]?.round ?? 0;
+          setRound(latestRound);
+          roundRef.current = latestRound;
+        }
+      }
+
+      if (typeof parsed.round === "number") {
+        setRound(parsed.round);
+        roundRef.current = parsed.round;
+      }
+
+      if (typeof parsed.winnerCount === "string") {
+        setWinnerCount(parsed.winnerCount);
+      }
+
+      if (typeof parsed.isMuted === "boolean") {
+        setIsMuted(parsed.isMuted);
+        setBackgroundMusicMuted(parsed.isMuted);
+      }
+    } catch (err) {
+      // Nếu parse lỗi thì bỏ qua, dùng state mặc định
+      console.error("Failed to load saved wheel state:", err);
+    }
+  }, []);
+
   // Start background music on first interaction
   const ensureMusic = useCallback(() => {
     if (!musicStarted.current) {
@@ -42,6 +114,28 @@ export default function Index() {
   useEffect(() => {
     return () => stopBackgroundMusic();
   }, []);
+
+  // Persist current state to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      const stateToSave: StoredState = {
+        remainingNumbers,
+        history: history.map((h) => ({
+          ...h,
+          timestamp: h.timestamp.toISOString(),
+        })),
+        round,
+        winnerCount,
+        isMuted,
+      };
+
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(stateToSave));
+      }
+    } catch (err) {
+      console.error("Failed to save wheel state:", err);
+    }
+  }, [remainingNumbers, history, round, winnerCount, isMuted]);
 
   const sound = useCallback((fn: () => void) => {
     if (!isMuted) fn();
@@ -99,7 +193,7 @@ export default function Index() {
       round: newRound,
       winners,
       timestamp: new Date(),
-      totalPool: remainingNumbers.length,
+      totalPool: newRemaining.length,
     }, ...prev]);
 
     sound(playWinSound);
@@ -117,6 +211,9 @@ export default function Index() {
     roundRef.current = 0;
     setWinnerCount("5");
     setInputError("");
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem(STORAGE_KEY);
+    }
   }, [sound]);
 
   const totalWon = TOTAL_NUMBERS - remainingNumbers.length;
@@ -146,11 +243,43 @@ export default function Index() {
 
       {/* Header */}
       <header
-        className="relative py-5 px-4 text-center"
+        className="relative px-4 pt-4 pb-5"
         style={{ background: 'var(--gradient-hero)' }}
       >
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between mb-2">
+        <div className="max-w-5xl mx-auto space-y-3">
+          {/* Top banner with logos */}
+          <div className="flex items-center justify-between gap-4">
+            <div className="shrink-0 flex items-center justify-center">
+              <img
+                src={logoTruong}
+                alt="Logo trường"
+                className="h-14 sm:h-16 w-auto object-contain"
+              />
+            </div>
+
+            <div className="flex-1 text-center leading-snug">
+              <p className="text-[11px] sm:text-xs md:text-sm font-semibold tracking-wide text-sky-50">
+                ĐẠI HỌC Y DƯỢC THÀNH PHỐ HỒ CHÍ MINH
+              </p>
+              <p className="text-[11px] sm:text-xs md:text-sm font-semibold tracking-wide text-sky-50">
+                KHOA RĂNG HÀM MẶT
+              </p>
+              <p className="text-[11px] sm:text-xs md:text-sm font-semibold tracking-wide text-sky-50">
+                BỘ MÔN CẤY GHÉP NHA KHOA
+              </p>
+            </div>
+
+            <div className="shrink-0 flex items-center justify-center">
+              <img
+                src={logoKhoa}
+                alt="Logo khoa"
+                className="h-14 sm:h-16 w-auto object-contain"
+              />
+            </div>
+          </div>
+
+          {/* Title + controls */}
+          <div className="flex items-center justify-between mt-2">
             <button
               onClick={handleToggleMute}
               className="rounded-full p-2.5 transition-all hover:scale-110 active:scale-95"
@@ -183,7 +312,11 @@ export default function Index() {
             </div>
 
             <button
-              onClick={() => { sound(playButtonClick); ensureMusic(); setShowHistory(!showHistory); }}
+              onClick={() => {
+                sound(playButtonClick);
+                ensureMusic();
+                setShowHistory(true);
+              }}
               className="rounded-full p-2.5 transition-all hover:scale-110 active:scale-95"
               style={{
                 background: showHistory ? 'hsl(43, 96%, 56%)' : 'hsla(38, 55%, 95%, 0.15)',
@@ -218,12 +351,43 @@ export default function Index() {
         </div>
       </header>
 
+      {/* Image layout: 1 horizontal on top, 3 vertical below */}
+      <section className="max-w-5xl mx-auto px-4 mt-6">
+        {/* Ảnh ngang: anh2 */}
+        <div className="mb-4">
+          <img
+            src={anh2}
+            alt="Ảnh ngang"
+            className="w-full rounded-2xl shadow-md object-cover"
+          />
+        </div>
+
+        {/* 3 ảnh dọc: anh1, anh3, anh4 */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <img
+            src={anh1}
+            alt="Ảnh dọc 1"
+            className="w-full h-full rounded-2xl shadow-md object-cover"
+          />
+          <img
+            src={anh3}
+            alt="Ảnh dọc 2"
+            className="w-full h-full rounded-2xl shadow-md object-cover"
+          />
+          <img
+            src={anh4}
+            alt="Ảnh dọc 3"
+            className="w-full h-full rounded-2xl shadow-md object-cover"
+          />
+        </div>
+      </section>
+
       {/* Main content */}
       <main className="max-w-5xl mx-auto px-4 py-8">
-        <div className={`grid gap-6 ${showHistory ? 'lg:grid-cols-5' : 'lg:grid-cols-1'}`}>
+        <div className="grid gap-6 lg:grid-cols-1">
 
-          {/* Left: Wheel area */}
-          <div className={showHistory ? 'lg:col-span-3' : 'lg:col-span-1'}>
+          {/* Wheel area */}
+          <div className="lg:col-span-1">
             <div
               className="rounded-3xl p-8 border"
               style={{
@@ -401,40 +565,6 @@ export default function Index() {
             </div>
           </div>
 
-          {/* Right: History */}
-          {showHistory && (
-            <div className="lg:col-span-2">
-              <div
-                className="rounded-3xl p-5 border sticky top-4"
-                style={{
-                  background: 'hsl(var(--card))',
-                  borderColor: 'hsl(var(--border))',
-                  boxShadow: 'var(--shadow-warm)',
-                  maxHeight: 'calc(100vh - 140px)',
-                  overflowY: 'auto',
-                }}
-              >
-                <h2
-                  className="font-display text-xl mb-4 flex items-center gap-2"
-                  style={{ color: 'hsl(var(--foreground))' }}
-                >
-                  📜 Lịch Sử Quay
-                  {history.length > 0 && (
-                    <span
-                      className="text-sm font-sans font-bold px-2 py-0.5 rounded-full"
-                      style={{
-                        background: 'hsl(var(--primary))',
-                        color: 'hsl(var(--primary-foreground))',
-                      }}
-                    >
-                      {history.length} lượt
-                    </span>
-                  )}
-                </h2>
-                <SpinHistory history={history} />
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Footer quote */}
@@ -456,6 +586,34 @@ export default function Index() {
           onClose={() => setShowPopup(false)}
         />
       )}
+
+      {/* History popup */}
+      <Dialog open={showHistory} onOpenChange={setShowHistory}>
+        <DialogContent className="max-w-2xl sm:max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>📜 Lịch Sử Quay</DialogTitle>
+            <DialogDescription>
+              Xem lại tất cả các lượt quay và các số đã trúng thưởng.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-2 max-h-[65vh] overflow-y-auto space-y-3">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2 text-sm font-semibold">
+                <span>✅ Tổng lượt quay:</span>
+                <span className="px-2 py-0.5 rounded-full bg-primary text-primary-foreground text-xs font-bold">
+                  {history.length}
+                </span>
+              </div>
+              {history.length > 0 && (
+                <span className="text-xs text-muted-foreground">
+                  Nhấn từng lượt để xem chi tiết các số trúng.
+                </span>
+              )}
+            </div>
+            <SpinHistory history={history} />
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
