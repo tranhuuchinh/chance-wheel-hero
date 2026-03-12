@@ -20,7 +20,7 @@ import {
 } from "@/utils/sound";
 import wheelImg from "@/assets/wheel-decoration.png";
 import logoTruong from "@/assets/logo-truong.png";
-import logoKhoa from "@/assets/logo-khoa.png";
+import logoKhoa from "@/assets/logo-khoa-square.png";
 import anh1 from "@/assets/anh1.jpeg";
 import anh2 from "@/assets/anh2.jpeg";
 import anh3 from "@/assets/anh3.jpeg";
@@ -50,12 +50,11 @@ export default function Index() {
   const [showPopup, setShowPopup] = useState(false);
   const [history, setHistory] = useState<HistoryRound[]>([]);
   const [showHistory, setShowHistory] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const [showConfetti, setShowConfetti] = useState(false);
   const [round, setRound] = useState(0);
   const [inputError, setInputError] = useState("");
   const roundRef = useRef(0);
-  const musicStarted = useRef(false);
 
   // Load saved state from localStorage on first mount
   useEffect(() => {
@@ -92,23 +91,20 @@ export default function Index() {
       if (typeof parsed.winnerCount === "string") {
         setWinnerCount(parsed.winnerCount);
       }
-
-      if (typeof parsed.isMuted === "boolean") {
-        setIsMuted(parsed.isMuted);
-        setBackgroundMusicMuted(parsed.isMuted);
-      }
     } catch (err) {
       // Nếu parse lỗi thì bỏ qua, dùng state mặc định
       console.error("Failed to load saved wheel state:", err);
     }
   }, []);
 
-  // Start background music on first interaction
+  // Thử bật nhạc nền ngay khi vào web (nếu không tắt tiếng trước đó)
+  useEffect(() => {
+    startBackgroundMusic(isMuted);
+  }, [isMuted]);
+
+  // Đảm bảo nhạc nền bật khi có tương tác đầu tiên
   const ensureMusic = useCallback(() => {
-    if (!musicStarted.current) {
-      musicStarted.current = true;
-      startBackgroundMusic(isMuted);
-    }
+    startBackgroundMusic(isMuted);
   }, [isMuted]);
 
   useEffect(() => {
@@ -126,7 +122,6 @@ export default function Index() {
         })),
         round,
         winnerCount,
-        isMuted,
       };
 
       if (typeof window !== "undefined") {
@@ -363,7 +358,7 @@ export default function Index() {
         </div>
 
         {/* 3 ảnh dọc: anh1, anh3, anh4 */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {/* <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <img
             src={anh1}
             alt="Ảnh dọc 1"
@@ -379,7 +374,7 @@ export default function Index() {
             alt="Ảnh dọc 3"
             className="w-full h-full rounded-2xl shadow-md object-cover"
           />
-        </div>
+        </div> */}
       </section>
 
       {/* Main content */}
