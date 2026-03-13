@@ -8,6 +8,21 @@ interface LuckyWheelProps {
 
 const SEGMENTS = 12;
 
+const SEGMENT_ICONS = [
+  "🎁",
+  "⭐️",
+  "🍀",
+  "🎉",
+  "💎",
+  "🍭",
+  "🎈",
+  "🔥",
+  "🌟",
+  "🎊",
+  "🎲",
+  "🧸",
+];
+
 const SEGMENT_FILLS = [
   { bg: '#b8232a', fg: '#fff' },
   { bg: '#f5c518', fg: '#3a2400' },
@@ -145,6 +160,7 @@ export function LuckyWheel({ isSpinning, onSpinComplete, remainingCount }: Lucky
       const startAngle = angle + i * arc;
       const endAngle = startAngle + arc;
       const colors = SEGMENT_FILLS[i % SEGMENT_FILLS.length];
+      const icon = SEGMENT_ICONS[i % SEGMENT_ICONS.length];
 
       ctx.beginPath();
       ctx.moveTo(CX, CY);
@@ -193,19 +209,19 @@ export function LuckyWheel({ isSpinning, onSpinComplete, remainingCount }: Lucky
       ctx.save();
       ctx.translate(CX, CY);
       ctx.rotate(startAngle + arc / 2);
-      ctx.translate(WHEEL_R * 0.6, 0);
+      ctx.translate(WHEEL_R * 0.62, 0);
       ctx.rotate(Math.PI / 2);
 
-      ctx.font = '700 20px "Nunito", sans-serif';
+      ctx.font = '700 26px "Apple Color Emoji", "Segoe UI Emoji", system-ui, sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-
-      // Text shadow
-      ctx.fillStyle = 'rgba(0,0,0,0.4)';
-      ctx.fillText((i + 1).toString(), 0.8, 0.8);
+      ctx.shadowColor = 'rgba(0,0,0,0.35)';
+      ctx.shadowBlur = 4;
+      ctx.shadowOffsetX = 0.8;
+      ctx.shadowOffsetY = 0.8;
 
       ctx.fillStyle = colors.fg;
-      ctx.fillText((i + 1).toString(), 0, 0);
+      ctx.fillText(icon, 0, 0);
       ctx.restore();
     }
 

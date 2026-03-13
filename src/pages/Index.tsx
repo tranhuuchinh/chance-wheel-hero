@@ -23,10 +23,7 @@ import {
 import wheelImg from "@/assets/wheel-decoration.png";
 import logoTruong from "@/assets/logo-truong.png";
 import logoKhoa from "@/assets/logo-khoa-square.png";
-import anh1 from "@/assets/anh1.jpeg";
-import anh2 from "@/assets/anh2.jpeg";
-import anh3 from "@/assets/anh3.jpeg";
-import anh4 from "@/assets/anh4.jpeg";
+import anh5 from "@/assets/anh5.jpg";
 
 const STORAGE_KEY = "chance-wheel-state-v1";
 
@@ -255,8 +252,22 @@ export default function Index() {
   }, [totalPrizes]);
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--gradient-warm)' }}>
+    <div className="min-h-screen relative overflow-hidden" style={{ background: 'var(--gradient-warm)' }}>
       <Confetti active={showConfetti} />
+
+      {/* Side decorative images */}
+      <div className="pointer-events-none hidden xl:block">
+        <img
+          src={anh5}
+          alt="Trang trí bên trái"
+          className="fixed left-4 top-[25vh] max-h-[60vh] max-w-[300px] drop-shadow-2xl rounded-2xl"
+        />
+        <img
+          src={anh5}
+          alt="Trang trí bên phải"
+          className="fixed right-4 top-[25vh] max-h-[60vh] max-w-[300px] drop-shadow-2xl rounded-2xl"
+        />
+      </div>
 
       {/* Initial required setup: total prizes */}
       <Dialog
@@ -335,32 +346,29 @@ export default function Index() {
 
       {/* Header */}
       <header
-        className="relative px-4 pt-4 pb-5"
+        className="fixed top-0 left-0 right-0 px-4 pt-2 pb-2 z-50"
         style={{ background: 'var(--gradient-hero)' }}
       >
-        <div className="max-w-5xl mx-auto space-y-3">
+        <div className="max-w-5xl mx-auto space-y-1.5">
           {/* Top banner with logos */}
           <div className="flex items-center justify-between gap-4">
             <div className="shrink-0 flex items-center justify-center">
               <img
                 src={logoTruong}
                 alt="Logo trường"
-                className="h-14 sm:h-16 w-auto object-contain"
+                className="h-16 sm:h-16 w-auto object-contain"
               />
             </div>
 
-            <div className="flex-1 text-center leading-snug">
-              <p className="text-[11px] sm:text-xs md:text-sm font-semibold tracking-wide text-sky-50">
+            <div className="flex-1 text-center leading-tight">
+              <p className="text-[10px] sm:text-xs font-semibold tracking-wide text-sky-50">
                 ĐẠI HỌC Y DƯỢC THÀNH PHỐ HỒ CHÍ MINH
               </p>
-              <p className="text-[11px] sm:text-xs md:text-sm font-semibold tracking-wide text-sky-50">
+              <p className="text-[10px] sm:text-xs font-semibold tracking-wide text-sky-50">
                 KHOA RĂNG HÀM MẶT
               </p>
-              <p className="text-[11px] sm:text-xs md:text-sm font-semibold tracking-wide text-sky-50">
+              <p className="text-[10px] sm:text-xs font-semibold tracking-wide text-sky-50">
                 BỘ MÔN CẤY GHÉP NHA KHOA
-              </p>
-              <p className="text-[11px] sm:text-xs md:text-sm font-semibold tracking-wide text-sky-50">
-                LỄ RA MẮT SÁCH
               </p>
             </div>
 
@@ -368,41 +376,41 @@ export default function Index() {
               <img
                 src={logoKhoa}
                 alt="Logo khoa"
-                className="h-14 sm:h-16 w-auto object-contain"
+                className="h-16 sm:h-16 w-auto object-contain"
               />
             </div>
           </div>
 
           {/* Title + controls */}
-          <div className="flex items-center justify-between mt-2">
+          <div className="flex items-center justify-between">
             <button
               onClick={handleToggleMute}
-              className="rounded-full p-2.5 transition-all hover:scale-110 active:scale-95"
+              className="rounded-full p-2 transition-all hover:scale-110 active:scale-95"
               style={{
                 background: isMuted ? 'hsla(0, 70%, 50%, 0.25)' : 'hsla(38, 55%, 95%, 0.15)',
                 color: 'hsl(38, 55%, 95%)',
               }}
               title={isMuted ? "Bật nhạc nền" : "Tắt nhạc nền"}
             >
-              {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+              {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
             </button>
 
             <div className="text-center">
-              <div className="flex items-center justify-center gap-3">
-                <img src={wheelImg} alt="" className="w-10 h-10 object-contain float" />
+              <div className="flex items-center justify-center gap-2">
+                <img src={wheelImg} alt="" className="w-8 h-8 object-contain float" />
                 <h1
-                  className="font-display text-3xl sm:text-4xl"
+                  className="font-display text-2xl sm:text-3xl"
                   style={{ color: 'hsl(43, 96%, 78%)' }}
                 >
                   🎡 Vòng Quay May Mắn
                 </h1>
-                <img src={wheelImg} alt="" className="w-10 h-10 object-contain float" style={{ animationDelay: '1s' }} />
+                <img src={wheelImg} alt="" className="w-8 h-8 object-contain float" style={{ animationDelay: '1s' }} />
               </div>
               <p
-                className="text-sm mt-1 font-semibold tracking-wide"
+                className="text-xs mt-2 font-semibold tracking-wide"
                 style={{ color: 'hsl(145, 55%, 75%)' }}
               >
-                ✨ Vận may luôn mỉm cười với người dũng cảm ✨
+                ✨ Vận may sẽ luôn mỉm cười với bạn nha ✨
               </p>
             </div>
 
@@ -412,25 +420,25 @@ export default function Index() {
                 ensureMusic();
                 setShowHistory(true);
               }}
-              className="rounded-full p-2.5 transition-all hover:scale-110 active:scale-95"
+              className="rounded-full p-2 transition-all hover:scale-110 active:scale-95"
               style={{
                 background: showHistory ? 'hsl(43, 96%, 56%)' : 'hsla(38, 55%, 95%, 0.15)',
                 color: showHistory ? 'hsl(25, 35%, 15%)' : 'hsl(38, 55%, 95%)',
               }}
               title="Xem lịch sử"
             >
-              <History className="w-5 h-5" />
+              <History className="w-4 h-4" />
             </button>
           </div>
 
           {/* Progress bar */}
-          <div className="mt-3">
-            <div className="flex justify-between text-xs mb-1" style={{ color: 'hsl(145, 55%, 80%)' }}>
+          <div className="mt-1.5">
+            <div className="flex justify-between text-[10px] mb-0.5" style={{ color: 'hsl(145, 55%, 80%)' }}>
               <span>🎯 {totalWon} số đã trúng</span>
               <span>{remainingNumbers.length} số còn lại / {sessionTotal} tổng</span>
             </div>
             <div
-              className="h-2.5 rounded-full overflow-hidden"
+              className="h-2 rounded-full overflow-hidden"
               style={{ background: 'hsla(38, 55%, 95%, 0.15)' }}
             >
               <div
@@ -445,6 +453,9 @@ export default function Index() {
           </div>
         </div>
       </header>
+
+      {/* Spacer for fixed header */}
+      <div className="h-[18vh]"></div>
 
       {/* Image layout: 1 horizontal on top, 3 vertical below */}
       <section className="max-w-5xl mx-auto">
@@ -478,7 +489,7 @@ export default function Index() {
       </section>
 
       {/* Main content */}
-      <main className="max-w-5xl mx-auto px-4 py-8">
+      <main className="max-w-7xl mx-auto px-4 py-12 xl:px-60">
         <div className="grid gap-6 lg:grid-cols-1">
 
           {/* Wheel area */}
