@@ -17,6 +17,8 @@ import {
   startBackgroundMusic,
   stopBackgroundMusic,
   setBackgroundMusicMuted,
+  startSpinSound,
+  stopSpinSound,
 } from "@/utils/sound";
 import wheelImg from "@/assets/wheel-decoration.png";
 import logoTruong from "@/assets/logo-truong.png";
@@ -160,6 +162,7 @@ export default function Index() {
     setInputError("");
     setIsSpinning(true);
     sound(playButtonClick);
+    sound(startSpinSound);
   }, [winnerCount, remainingNumbers, sound, ensureMusic]);
 
   const handleSpinComplete = useCallback(() => {
@@ -181,6 +184,7 @@ export default function Index() {
     setCurrentWinners(winners);
     setRemainingNumbers(newRemaining);
     setIsSpinning(false);
+    stopSpinSound();
     setShowConfetti(true);
     setShowPopup(true);
 
@@ -261,6 +265,9 @@ export default function Index() {
               </p>
               <p className="text-[11px] sm:text-xs md:text-sm font-semibold tracking-wide text-sky-50">
                 BỘ MÔN CẤY GHÉP NHA KHOA
+              </p>
+              <p className="text-[11px] sm:text-xs md:text-sm font-semibold tracking-wide text-sky-50">
+                LỄ RA MẮT SÁCH
               </p>
             </div>
 
@@ -347,15 +354,15 @@ export default function Index() {
       </header>
 
       {/* Image layout: 1 horizontal on top, 3 vertical below */}
-      <section className="max-w-5xl mx-auto px-4 mt-6">
+      <section className="max-w-5xl mx-auto">
         {/* Ảnh ngang: anh2 */}
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <img
             src={anh2}
             alt="Ảnh ngang"
             className="w-full rounded-2xl shadow-md object-cover"
           />
-        </div>
+        </div> */}
 
         {/* 3 ảnh dọc: anh1, anh3, anh4 */}
         {/* <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
