@@ -513,7 +513,7 @@ export default function Index() {
 
               {/* Controls */}
               <div className="space-y-5">
-                {/* Winner count input */}
+                {/* Winner count input and Spin button on same line */}
                 <div>
                   <label
                     className="block text-sm font-bold mb-2 flex items-center gap-2"
@@ -521,62 +521,64 @@ export default function Index() {
                   >
                     🎯 Số lượng người trúng thưởng
                   </label>
-                  <input
-                    type="number"
-                    min={1}
-                    max={remainingNumbers.length}
-                    value={winnerCount}
-                    onChange={(e) => {
-                      setWinnerCount(e.target.value);
-                      setInputError("");
-                    }}
-                    disabled={isSpinning}
-                    className="w-full rounded-2xl px-5 py-4 text-center text-2xl font-bold border-2 outline-none transition-all focus:ring-2"
-                    style={{
-                      background: 'hsl(var(--secondary))',
-                      borderColor: inputError ? 'hsl(var(--destructive))' : 'hsl(var(--border))',
-                      color: 'hsl(var(--foreground))',
-                      '--tw-ring-color': 'hsl(var(--primary) / 0.3)',
-                    } as React.CSSProperties}
-                    placeholder="Nhập số..."
-                    onClick={ensureMusic}
-                  />
+                  <div className="flex gap-3 items-start">
+                    <div className="flex-1">
+                      <input
+                        type="number"
+                        min={1}
+                        max={remainingNumbers.length}
+                        value={winnerCount}
+                        onChange={(e) => {
+                          setWinnerCount(e.target.value);
+                          setInputError("");
+                        }}
+                        disabled={isSpinning}
+                        className="w-full rounded-full px-10 py-4 text-center text-lg font-bold border-2 outline-none transition-all focus:ring-2"
+                        style={{
+                          background: 'hsl(var(--secondary))',
+                          borderColor: inputError ? 'hsl(var(--destructive))' : 'hsl(var(--border))',
+                          color: 'hsl(var(--foreground))',
+                          '--tw-ring-color': 'hsl(var(--primary) / 0.3)',
+                        } as React.CSSProperties}
+                        placeholder="Nhập số..."
+                        onClick={ensureMusic}
+                      />
+                    </div>
+                    {remainingNumbers.length === 0 ? (
+                      <div
+                        className="flex-1 rounded-2xl p-4 text-center"
+                        style={{ background: 'hsl(var(--secondary))' }}
+                      >
+                        <p className="text-base font-bold" style={{ color: 'hsl(var(--primary))' }}>
+                          🎊 Tất cả {sessionTotal} số đã được quay!
+                        </p>
+                        <p className="text-xs mt-1" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                          Nhấn reset để bắt đầu lại
+                        </p>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={handleSpin}
+                        disabled={isSpinning || remainingNumbers.length === 0}
+                        className="btn-spin flex-1"
+                      >
+                        {isSpinning ? (
+                          <span className="flex items-center justify-center gap-2">
+                            <Shuffle className="w-5 h-5 animate-spin" />
+                            Đang quay... 🎡
+                          </span>
+                        ) : (
+                          <span>🎰 Quay Ngay! ({remainingNumbers.length} số)</span>
+                        )}
+                      </button>
+                    )}
+                  </div>
                   {inputError && (
                     <p className="text-xs mt-1.5 font-semibold" style={{ color: 'hsl(var(--destructive))' }}>
                       ⚠️ {inputError}
                     </p>
                   )}
                 </div>
-
-                {/* Spin button */}
-                {remainingNumbers.length === 0 ? (
-                  <div
-                    className="rounded-2xl p-5 text-center"
-                    style={{ background: 'hsl(var(--secondary))' }}
-                  >
-                    <p className="text-lg font-bold" style={{ color: 'hsl(var(--primary))' }}>
-                      🎊 Tất cả {sessionTotal} số đã được quay!
-                    </p>
-                    <p className="text-sm mt-1" style={{ color: 'hsl(var(--muted-foreground))' }}>
-                      Nhấn reset để bắt đầu lại
-                    </p>
-                  </div>
-                ) : (
-                  <button
-                    onClick={handleSpin}
-                    disabled={isSpinning || remainingNumbers.length === 0}
-                    className="btn-spin w-full"
-                  >
-                    {isSpinning ? (
-                      <span className="flex items-center justify-center gap-2">
-                        <Shuffle className="w-5 h-5 animate-spin" />
-                        Đang quay... 🎡
-                      </span>
-                    ) : (
-                      <span>🎰 Quay Ngay! ({remainingNumbers.length} số)</span>
-                    )}
-                  </button>
-                )}
 
                 {/* Reset button */}
                 <button
