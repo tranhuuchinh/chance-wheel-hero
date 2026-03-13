@@ -28,8 +28,6 @@ import anh2 from "@/assets/anh2.jpeg";
 import anh3 from "@/assets/anh3.jpeg";
 import anh4 from "@/assets/anh4.jpeg";
 
-const TOTAL_NUMBERS = 300;
-const ALL_NUMBERS = Array.from({ length: TOTAL_NUMBERS }, (_, i) => i + 1);
 const STORAGE_KEY = "chance-wheel-state-v1";
 
 type StoredHistoryRound = Omit<HistoryRound, "timestamp"> & {
@@ -42,10 +40,12 @@ interface StoredState {
   round: number;
   winnerCount: string;
   isMuted: boolean;
+  totalPrizes?: string;
+  totalNumbers?: number;
 }
 
 export default function Index() {
-  const [remainingNumbers, setRemainingNumbers] = useState<number[]>([...ALL_NUMBERS]);
+  const [remainingNumbers, setRemainingNumbers] = useState<number[]>([]);
   const [winnerCount, setWinnerCount] = useState<string>("5");
   const [isSpinning, setIsSpinning] = useState(false);
   const [currentWinners, setCurrentWinners] = useState<number[]>([]);
@@ -56,6 +56,10 @@ export default function Index() {
   const [showConfetti, setShowConfetti] = useState(false);
   const [round, setRound] = useState(0);
   const [inputError, setInputError] = useState("");
+  const [totalPrizes, setTotalPrizes] = useState<string>("");
+  const [setupError, setSetupError] = useState("");
+  const [showSetupDialog, setShowSetupDialog] = useState(true);
+  const [totalNumbers, setTotalNumbers] = useState<number | null>(null);
   const roundRef = useRef(0);
 
   // Load saved state from localStorage on first mount
@@ -93,6 +97,18 @@ export default function Index() {
       if (typeof parsed.winnerCount === "string") {
         setWinnerCount(parsed.winnerCount);
       }
+
+      if (typeof parsed.totalPrizes === "string") {
+        setTotalPrizes(parsed.totalPrizes);
+      }
+
+      if (typeof parsed.totalNumbers === "number") {
+        setTotalNumbers(parsed.totalNumbers);
+        if (!parsed.remainingNumbers || parsed.remainingNumbers.length === 0) {
+          setRemainingNumbers(Array.from({ length: parsed.totalNumbers }, (_, i) => i + 1));
+        }
+        setShowSetupDialog(false);
+      }
     } catch (err) {
       // Nếu parse lỗi thì bỏ qua, dùng state mặc định
       console.error("Failed to load saved wheel state:", err);
@@ -124,6 +140,9 @@ export default function Index() {
         })),
         round,
         winnerCount,
+        isMuted,
+        totalPrizes,
+        totalNumbers: totalNumbers ?? undefined,
       };
 
       if (typeof window !== "undefined") {
@@ -132,7 +151,7 @@ export default function Index() {
     } catch (err) {
       console.error("Failed to save wheel state:", err);
     }
-  }, [remainingNumbers, history, round, winnerCount, isMuted]);
+  }, [remainingNumbers, history, round, winnerCount, isMuted, totalPrizes, totalNumbers]);
 
   const sound = useCallback((fn: () => void) => {
     if (!isMuted) fn();
@@ -202,7 +221,7 @@ export default function Index() {
 
   const handleReset = useCallback(() => {
     sound(playButtonClick);
-    setRemainingNumbers([...ALL_NUMBERS]);
+    setRemainingNumbers([]);
     setCurrentWinners([]);
     setShowPopup(false);
     setHistory([]);
@@ -210,17 +229,91 @@ export default function Index() {
     roundRef.current = 0;
     setWinnerCount("5");
     setInputError("");
+    setTotalPrizes("");
+    setSetupError("");
+    setShowSetupDialog(true);
+    setTotalNumbers(null);
     if (typeof window !== "undefined") {
       window.localStorage.removeItem(STORAGE_KEY);
     }
   }, [sound]);
 
-  const totalWon = TOTAL_NUMBERS - remainingNumbers.length;
-  const progressPct = (totalWon / TOTAL_NUMBERS) * 100;
+  const sessionTotal = totalNumbers ?? remainingNumbers.length;
+  const totalWon = sessionTotal > 0 ? sessionTotal - remainingNumbers.length : 0;
+  const progressPct = sessionTotal > 0 ? (totalWon / sessionTotal) * 100 : 0;
+
+  const handleConfirmSetup = useCallback(() => {
+    const value = parseInt(totalPrizes, 10);
+    if (isNaN(value) || value <= 0) {
+      setSetupError("Vui lòng nhập số hợp lệ!");
+      return;
+    }
+    setTotalNumbers(value);
+    setRemainingNumbers(Array.from({ length: value }, (_, i) => i + 1));
+    setSetupError("");
+    setShowSetupDialog(false);
+  }, [totalPrizes]);
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--gradient-warm)' }}>
       <Confetti active={showConfetti} />
+
+      {/* Initial required setup: total prizes */}
+      <Dialog
+        open={showSetupDialog}
+        onOpenChange={(open) => {
+          // Không cho tự đóng khi chưa xác nhận
+          if (!open) return;
+          setShowSetupDialog(true);
+        }}
+      >
+        <DialogContent className="max-w-sm sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>🎁 Thiết lập tổng số trúng thưởng</DialogTitle>
+            <DialogDescription>
+              Nhập tổng số phần thưởng sẽ được quay trong chương trình. Đây là bước bắt buộc trước khi bắt đầu.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-3 space-y-3">
+            <div>
+              <label className="block text-sm font-semibold mb-1">
+                Tổng số phần thưởng (tùy ý)
+              </label>
+              <input
+                type="number"
+                min={1}
+                value={totalPrizes}
+                onChange={(e) => {
+                  setTotalPrizes(e.target.value);
+                  setSetupError("");
+                }}
+                className="w-full rounded-xl border px-4 py-2.5 text-center text-lg font-bold outline-none focus:ring-2"
+                style={{
+                  background: 'hsl(var(--secondary))',
+                  borderColor: setupError ? 'hsl(var(--destructive))' : 'hsl(var(--border))',
+                  color: 'hsl(var(--foreground))',
+                  '--tw-ring-color': 'hsl(var(--primary) / 0.3)',
+                } as React.CSSProperties}
+              />
+              {setupError && (
+                <p className="text-xs mt-1.5 font-semibold" style={{ color: 'hsl(var(--destructive))' }}>
+                  ⚠️ {setupError}
+                </p>
+              )}
+            </div>
+            <button
+              className="w-full rounded-full py-2.5 font-bold text-sm transition-all hover:opacity-90 active:scale-95"
+              style={{
+                background: 'hsl(var(--primary))',
+                color: 'hsl(var(--primary-foreground))',
+              }}
+              onClick={handleConfirmSetup}
+            >
+              Bắt đầu quay
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Ambient decorations */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
@@ -334,7 +427,7 @@ export default function Index() {
           <div className="mt-3">
             <div className="flex justify-between text-xs mb-1" style={{ color: 'hsl(145, 55%, 80%)' }}>
               <span>🎯 {totalWon} số đã trúng</span>
-              <span>{remainingNumbers.length} số còn lại / {TOTAL_NUMBERS} tổng</span>
+              <span>{remainingNumbers.length} số còn lại / {sessionTotal} tổng</span>
             </div>
             <div
               className="h-2.5 rounded-full overflow-hidden"
@@ -451,7 +544,7 @@ export default function Index() {
                     style={{ background: 'hsl(var(--secondary))' }}
                   >
                     <p className="text-lg font-bold" style={{ color: 'hsl(var(--primary))' }}>
-                      🎊 Tất cả {TOTAL_NUMBERS} số đã được quay!
+                      🎊 Tất cả {sessionTotal} số đã được quay!
                     </p>
                     <p className="text-sm mt-1" style={{ color: 'hsl(var(--muted-foreground))' }}>
                       Nhấn reset để bắt đầu lại
