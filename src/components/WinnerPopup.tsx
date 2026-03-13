@@ -20,7 +20,7 @@ export function WinnerPopup({ winners, round, onClose }: WinnerPopupProps) {
   }, []);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
       {/* Backdrop */}
       <div
         className="absolute inset-0"
@@ -30,7 +30,7 @@ export function WinnerPopup({ winners, round, onClose }: WinnerPopupProps) {
 
       {/* Modal */}
       <div
-        className="relative w-full max-w-lg pop-in rounded-3xl overflow-hidden"
+        className="relative w-full max-w-5xl ma pop-in rounded-3xl overflow-hidden"
         style={{
           background: 'hsl(var(--warm-white))',
           boxShadow: '0 25px 60px hsla(25, 35%, 10%, 0.4), 0 0 0 2px hsl(43, 96%, 56%)',
@@ -80,7 +80,7 @@ export function WinnerPopup({ winners, round, onClose }: WinnerPopupProps) {
         </div>
 
         {/* Winners grid */}
-        <div className="px-6 py-5">
+        <div className="px-6 py-6 sm:px-8 sm:py-7">
           <div className="flex items-center gap-2 mb-3">
             <Star className="w-4 h-4 text-gold" style={{ color: 'hsl(var(--gold))' }} />
             <span className="font-bold text-sm" style={{ color: 'hsl(var(--foreground))' }}>
@@ -89,19 +89,19 @@ export function WinnerPopup({ winners, round, onClose }: WinnerPopupProps) {
           </div>
 
           <div
-            className="rounded-2xl p-4 max-h-60 overflow-y-auto"
+            className="rounded-2xl p-4 sm:p-5 max-h-[85vh] overflow-y-auto"
             style={{ background: 'hsl(var(--secondary))' }}
           >
-            <div className="flex flex-wrap gap-2 justify-center">
+            <div className="flex flex-wrap gap-3 justify-center">
               {winners.sort((a, b) => a - b).map((num, idx) => (
                 <div
                   key={num}
                   className="number-badge pop-in"
                   style={{
                     animationDelay: `${idx * 0.05}s`,
-                    minWidth: '3rem',
-                    height: '3rem',
-                    fontSize: num >= 100 ? '0.75rem' : '0.875rem',
+                    minWidth: '4.5rem',
+                    height: '4.5rem',
+                    fontSize: num >= 100 ? '1.05rem' : '1.25rem',
                   }}
                 >
                   {num}
@@ -119,7 +119,7 @@ export function WinnerPopup({ winners, round, onClose }: WinnerPopupProps) {
         </div>
 
         {/* Footer */}
-        <div className="px-6 pb-6">
+        <div className="px-6 pb-6 sm:px-8">
           <button
             onClick={onClose}
             className="btn-spin w-full"
