@@ -30,7 +30,7 @@ export function WinnerPopup({ winners, round, onClose }: WinnerPopupProps) {
 
       {/* Modal */}
       <div
-        className="relative w-full max-w-5xl ma pop-in rounded-3xl overflow-hidden"
+        className="relative w-full max-w-5xl ma pop-in rounded-3xl overflow-hidden max-h-[90vh] flex flex-col"
         style={{
           background: 'hsl(var(--warm-white))',
           boxShadow: '0 25px 60px hsla(25, 35%, 10%, 0.4), 0 0 0 2px hsl(43, 96%, 56%)',
@@ -80,7 +80,7 @@ export function WinnerPopup({ winners, round, onClose }: WinnerPopupProps) {
         </div>
 
         {/* Winners grid */}
-        <div className="px-6 py-6 sm:px-8 sm:py-7">
+        <div className="px-6 py-6 sm:px-8 sm:py-7 overflow-hidden">
           <div className="flex items-center gap-2 mb-3">
             <Star className="w-4 h-4 text-gold" style={{ color: 'hsl(var(--gold))' }} />
             <span className="font-bold text-sm" style={{ color: 'hsl(var(--foreground))' }}>
@@ -89,7 +89,7 @@ export function WinnerPopup({ winners, round, onClose }: WinnerPopupProps) {
           </div>
 
           <div
-            className="rounded-2xl p-4 sm:p-5 max-h-[85vh] overflow-y-auto"
+            className="rounded-2xl p-4 sm:p-5 h-72 sm:h-80 overflow-y-auto"
             style={{ background: 'hsl(var(--secondary))' }}
           >
             <div className="flex flex-wrap gap-3 justify-center">
