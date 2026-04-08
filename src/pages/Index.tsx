@@ -23,7 +23,6 @@ import {
 import wheelImg from "@/assets/wheel-decoration.png";
 import logoTruong from "@/assets/logo-truong.png";
 import logoKhoa from "@/assets/logo-khoa-square.png";
-import anh5 from "@/assets/anh5.jpg";
 
 const STORAGE_KEY = "chance-wheel-state-v1";
 
@@ -255,20 +254,6 @@ export default function Index() {
     <div className="min-h-screen relative overflow-hidden" style={{ background: 'var(--gradient-warm)' }}>
       <Confetti active={showConfetti} />
 
-      {/* Side decorative images */}
-      <div className="pointer-events-none hidden xl:block">
-        <img
-          src={anh5}
-          alt="Trang trí bên trái"
-          className="fixed left-4 top-[25vh] max-h-[60vh] max-w-[300px] drop-shadow-2xl rounded-2xl"
-        />
-        <img
-          src={anh5}
-          alt="Trang trí bên phải"
-          className="fixed right-4 top-[25vh] max-h-[60vh] max-w-[300px] drop-shadow-2xl rounded-2xl"
-        />
-      </div>
-
       {/* Initial required setup: total prizes */}
       <Dialog
         open={showSetupDialog}
@@ -368,7 +353,7 @@ export default function Index() {
                 KHOA RĂNG HÀM MẶT
               </p>
               <p className="text-[10px] sm:text-xs font-semibold tracking-wide text-sky-50">
-                BỘ MÔN CẤY GHÉP NHA KHOA
+                BỘ MÔN PHẪU THUẬT HÀM MẶT
               </p>
             </div>
 
